@@ -164,7 +164,5 @@ public class MusicControlsBroadcastReceiver extends BroadcastReceiver {
 				ret.put("message", message);
 				this.musicControls.controlsNotification(ret);
 			}
-
-
 	}
 }

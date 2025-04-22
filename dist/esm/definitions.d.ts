@@ -1,4 +1,5 @@
 import { PluginListenerHandle } from "@capacitor/core";
+
 export interface CapacitorMusicControlsInfo {
     track?: string;
     artist?: string;
@@ -23,26 +24,32 @@ export interface CapacitorMusicControlsInfo {
     nextIcon?: string;
     closeIcon?: string;
     notificationIcon?: string;
+    requestAudioFocus?: boolean;
 }
+
 export interface CapacitorMusicControlsPlugin {
     /**
      * Create the media controls
-     * @param options {MusicControlsOptions}
+     * @param options {CapacitorMusicControlsInfo}
      * @returns {Promise<any>}
      */
     create(options: CapacitorMusicControlsInfo): Promise<any>;
+
     /**
      * Destroy the media controller
      * @returns {Promise<any>}
      */
     destroy(): Promise<any>;
+
     /**
      * Toggle play/pause:
-     * @param isPlaying {Object}
+     * @param args {Object}
      */
     updateIsPlaying(args: {
+        elapsed: number;
         isPlaying: boolean;
     }): void;
+
     /**
      * Update elapsed time, optionally toggle play/pause:
      * @param args {Object}
@@ -51,10 +58,24 @@ export interface CapacitorMusicControlsPlugin {
         elapsed: number;
         isPlaying: boolean;
     }): void;
+
     /**
      * Toggle dismissable:
      * @param dismissable {boolean}
      */
     updateDismissable(dismissable: boolean): void;
+
+    /**
+     * Add a listener for events from the native layer
+     * @param event {string} The event name
+     * @param callback {Function} The callback function to be called when the event fires
+     */
     addListener(event: string, callback: (info: any) => void): Promise<PluginListenerHandle>;
+
+    /**
+     * Update track metadata without recreating controls
+     * @param options {CapacitorMusicControlsInfo}
+     * @returns {Promise<any>}
+     */
+    updateMetadata(options: CapacitorMusicControlsInfo): Promise<any>;
 }
