@@ -1,5 +1,4 @@
 import { PluginListenerHandle } from "@capacitor/core";
-
 export interface CapacitorMusicControlsInfo {
     track?: string;
     artist?: string;
@@ -24,9 +23,7 @@ export interface CapacitorMusicControlsInfo {
     nextIcon?: string;
     closeIcon?: string;
     notificationIcon?: string;
-    requestAudioFocus?: boolean;
 }
-
 export interface CapacitorMusicControlsPlugin {
     /**
      * Create the media controls
@@ -34,22 +31,18 @@ export interface CapacitorMusicControlsPlugin {
      * @returns {Promise<any>}
      */
     create(options: CapacitorMusicControlsInfo): Promise<any>;
-
     /**
      * Destroy the media controller
      * @returns {Promise<any>}
      */
     destroy(): Promise<any>;
-
     /**
      * Toggle play/pause:
      * @param args {Object}
      */
     updateIsPlaying(args: {
-        elapsed: number;
         isPlaying: boolean;
     }): void;
-
     /**
      * Update elapsed time, optionally toggle play/pause:
      * @param args {Object}
@@ -58,7 +51,6 @@ export interface CapacitorMusicControlsPlugin {
         elapsed: number;
         isPlaying: boolean;
     }): void;
-
     /**
      * Toggle dismissable:
      * @param dismissable {boolean}
