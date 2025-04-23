@@ -13,6 +13,5 @@ export declare class CapacitorMusicControlsWeb extends WebPlugin implements Capa
         elapsed: number;
         isPlaying: boolean;
     }): void;
-
-    updateMetadata(options: CapacitorMusicControlsInfo): Promise<any>;
+    updateMetadata(options: CapacitorMusicControlsInfo): Promise<void>;
 }
