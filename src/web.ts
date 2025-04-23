@@ -31,4 +31,10 @@ export class CapacitorMusicControlsWeb extends WebPlugin implements CapacitorMus
         console.log('updateIsPlaying', args);
     }
 
+    updateMetadata(options: CapacitorMusicControlsInfo): Promise<void> {
+        console.log('updateMetadata', options);
+
+        return Promise.resolve(undefined);
+    }
+
 }
