@@ -22,5 +22,8 @@ export class CapacitorMusicControlsWeb extends WebPlugin {
     updateIsPlaying(args) {
         console.log('updateIsPlaying', args);
     }
+    updateMetadata(args) {
+        console.log('updateMetadata', args);
+    }
 }
 //# sourceMappingURL=web.js.map
