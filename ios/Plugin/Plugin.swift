@@ -1,6 +1,6 @@
 import Foundation
 import Capacitor
-
+import AVFoundation
 import MediaPlayer;
 
 extension DispatchQueue {
@@ -28,8 +28,23 @@ public class CapacitorMusicControls: CAPPlugin {
     
     var musicControlsInfo: CapacitorMusicControlsInfo!;
     var eventListnerActive = false;
+
+
+    func setupAudioSession() {
+            print("Setting up audio session for music controls")
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+                try AVAudioSession.sharedInstance().setActive(true)
+                print("Audio session setup successful")
+            } catch {
+                print("Failed to set up audio session: \(error.localizedDescription)")
+            }
+        }
  
     @objc func create(_ call: CAPPluginCall) {
+
+        setupAudioSession()
+
         let options: Dictionary = call.options;
 
         self.musicControlsInfo = CapacitorMusicControlsInfo(dictionary: options as NSDictionary);
@@ -53,12 +68,12 @@ public class CapacitorMusicControls: CAPPlugin {
         let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default();
 
         nowPlayingInfo = [
-            MPMediaItemPropertyArtist: self.musicControlsInfo.artist,
-            MPMediaItemPropertyTitle:self.musicControlsInfo.track,
-            MPMediaItemPropertyAlbumTitle:self.musicControlsInfo.album,
-            MPMediaItemPropertyPlaybackDuration:duration,
-            MPNowPlayingInfoPropertyElapsedPlaybackTime:elapsed,
-            MPNowPlayingInfoPropertyPlaybackRate:playbackRate
+            MPMediaItemPropertyArtist: self.musicControlsInfo.artist ?? "",
+            MPMediaItemPropertyTitle: self.musicControlsInfo.track ?? "",
+            MPMediaItemPropertyAlbumTitle: self.musicControlsInfo.album ?? "",
+            MPMediaItemPropertyPlaybackDuration: duration ?? 0,
+            MPNowPlayingInfoPropertyElapsedPlaybackTime: elapsed ?? 0,
+            MPNowPlayingInfoPropertyPlaybackRate: playbackRate ?? 1.0
         ]
         
 
@@ -125,7 +140,8 @@ public class CapacitorMusicControls: CAPPlugin {
     func createCoverArtwork(coverUri : String) -> MPMediaItemArtwork? {
         
         var coverImage: UIImage?;
-        
+        print("Cover URI provided: \(coverUri)")
+
         if (coverUri.hasPrefix("http://") || coverUri.hasPrefix("https://")) {
             //print("Cover item is a URL");
 
@@ -240,10 +256,12 @@ public class CapacitorMusicControls: CAPPlugin {
     
     func registerMusicControlsEventListener(){
         
-        self.eventListnerActive = true;
+        print("Registering music controls event listener")
+        self.eventListnerActive = true
 
         DispatchQueue.main.async {
-            UIApplication.shared.beginReceivingRemoteControlEvents();
+            UIApplication.shared.beginReceivingRemoteControlEvents()
+            print("Begin receiving remote control events")
         }
         
         let commandCenter = MPRemoteCommandCenter.shared();

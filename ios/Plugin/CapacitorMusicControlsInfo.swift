@@ -3,7 +3,7 @@ import Foundation
 
  
 
-//@objc(CapacitorMusicControlsInfo)
+@objc(CapacitorMusicControlsInfo)
 public class CapacitorMusicControlsInfo: NSObject {
     
 
