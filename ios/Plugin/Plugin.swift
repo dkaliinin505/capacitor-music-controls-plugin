@@ -31,15 +31,24 @@ public class CapacitorMusicControls: CAPPlugin {
 
 
     func setupAudioSession() {
-            print("Setting up audio session for music controls")
-            do {
-                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-                try AVAudioSession.sharedInstance().setActive(true)
-                print("Audio session setup successful")
-            } catch {
-                print("Failed to set up audio session: \(error.localizedDescription)")
-            }
+        print("Setting up audio session for music controls")
+        do {
+            // Set category with options
+            try AVAudioSession.sharedInstance().setCategory(.playback,
+                                                           mode: .default,
+                                                           options: [.allowBluetooth])
+
+            // Set audio session active with options
+            try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
+
+            print("Audio session setup successful")
+
+            // Ensure the app is registered for media remote control events
+            UIApplication.shared.beginReceivingRemoteControlEvents()
+        } catch {
+            print("Failed to set up audio session: \(error.localizedDescription)")
         }
+    }
  
     @objc func create(_ call: CAPPluginCall) {
 
@@ -89,6 +98,46 @@ public class CapacitorMusicControls: CAPPlugin {
 
         call.resolve();
         
+    }
+
+    @objc func updateMetadata(_ call: CAPPluginCall) {
+        print("Updating metadata without recreating controls")
+        let options: Dictionary = call.options;
+
+        // Log what we're receiving
+        print("Metadata update options:")
+        for (key, value) in options {
+            print("MusicControls: \(key): \(value)")
+        }
+
+        // Update the musicControlsInfo object
+        self.musicControlsInfo = CapacitorMusicControlsInfo(dictionary: options as NSDictionary);
+
+        // Update the Now Playing info
+        let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default();
+        var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
+
+        // Update metadata properties
+        nowPlayingInfo[MPMediaItemPropertyArtist] = self.musicControlsInfo.artist ?? "";
+        nowPlayingInfo[MPMediaItemPropertyTitle] = self.musicControlsInfo.track ?? "";
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = self.musicControlsInfo.album ?? "";
+
+        // Only update duration if provided
+        if let duration = self.musicControlsInfo.duration {
+            nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration;
+        }
+
+        // Update cover art if provided
+        if let coverUri = self.musicControlsInfo.cover, !coverUri.isEmpty {
+            if let mediaItemArtwork = self.createCoverArtwork(coverUri: coverUri) {
+                nowPlayingInfo[MPMediaItemPropertyArtwork] = mediaItemArtwork;
+            }
+        }
+
+        // Update the now playing info
+        nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo;
+
+        call.resolve();
     }
     
     
