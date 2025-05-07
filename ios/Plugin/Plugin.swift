@@ -33,18 +33,13 @@ public class CapacitorMusicControls: CAPPlugin {
     func setupAudioSession() {
         print("Setting up audio session for music controls")
         do {
-            // Set category with options
-            try AVAudioSession.sharedInstance().setCategory(.playback,
-                                                           mode: .default,
-                                                           options: [.allowBluetooth])
+            // Use the most basic configuration first
+            try AVAudioSession.sharedInstance().setCategory(.playback)
 
-            // Set audio session active with options
-            try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
+            // Try activating with no options first
+            try AVAudioSession.sharedInstance().setActive(true)
 
             print("Audio session setup successful")
-
-            // Ensure the app is registered for media remote control events
-            UIApplication.shared.beginReceivingRemoteControlEvents()
         } catch {
             print("Failed to set up audio session: \(error.localizedDescription)")
         }
